@@ -318,7 +318,7 @@ export class PluginRuntimeService {
         const { execSync } = require('child_process');
         const winPath = execSync(
           "powershell.exe -NoProfile -Command \"[Environment]::GetEnvironmentVariable('Path', 'User') + ';' + [Environment]::GetEnvironmentVariable('Path', 'Machine')\"",
-          { encoding: 'utf-8', timeout: 5000 }
+          { encoding: 'utf-8', timeout: 5000, windowsHide: true }
         ).trim();
         if (winPath) {
           const winPaths = winPath.split(';').filter((p: string) => p.trim());

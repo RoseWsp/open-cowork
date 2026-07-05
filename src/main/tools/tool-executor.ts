@@ -429,6 +429,7 @@ export class ToolExecutor {
         cwd,
         env: { ...safeEnv },
         timeout: 60000, // 60 second timeout
+        windowsHide: true,
       });
 
       let stdout = '';
@@ -946,6 +947,7 @@ export class ToolExecutor {
         cwd,
         env: { ...safeEnv2 },
         timeout: 30000,
+        windowsHide: true,
       });
 
       let stdout = '';

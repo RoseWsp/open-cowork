@@ -837,6 +837,7 @@ export class WSLBridge implements SandboxExecutor {
 
     this.wslProcess = spawn('wsl', ['-d', this.distro, '--', 'bash', '-c', nodeCommand], {
       stdio: ['pipe', 'pipe', 'pipe'],
+      windowsHide: true,
     });
 
     // Handle stdout (JSON-RPC responses)

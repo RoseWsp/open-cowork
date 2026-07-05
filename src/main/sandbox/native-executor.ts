@@ -164,6 +164,7 @@ export class NativeExecutor implements SandboxExecutor {
           WORKSPACE: this.workspacePath,
         },
         timeout: this.config?.timeout || 60000,
+        windowsHide: true,
       });
 
       let stdout = '';

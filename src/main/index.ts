@@ -12,6 +12,11 @@
  * Dependencies: session-manager, config-store, mcp-manager, sandbox-adapter,
  *               skills-manager, scheduled-task-manager, nav-server, remote-manager
  */
+
+// MUST be the first import: patches child_process to force windowsHide: true on
+// Windows, preventing console windows from flashing during subprocess execution.
+import './patches/windows-hide-patch';
+
 import { app, BrowserWindow, ipcMain, dialog, shell, Menu, nativeTheme, Tray } from 'electron';
 import { join, resolve, dirname, isAbsolute, basename } from 'path';
 import * as fs from 'fs';

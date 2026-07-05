@@ -375,7 +375,7 @@ export class MCPManager {
             '-Command',
             "[Environment]::GetEnvironmentVariable('Path', 'User') + ';' + [Environment]::GetEnvironmentVariable('Path', 'Machine')",
           ],
-          { timeout: 5000 }
+          { timeout: 5000, windowsHide: true }
         );
         if (stdout.trim()) {
           const pathDelimiter = ';';
@@ -808,6 +808,7 @@ export class MCPManager {
           const testResult = await execAsync(`${quotedCmd} --version`, {
             timeout: 5000,
             env: env,
+            windowsHide: true,
           });
           log(`[MCPManager] npx test successful: ${testResult.stdout.trim()}`);
         } catch (testError: unknown) {
@@ -1241,6 +1242,7 @@ export class MCPManager {
       const chromeProcess = spawn(chromePath, chromeArgs, {
         detached: true,
         stdio: 'ignore',
+        windowsHide: true,
       });
       chromeProcess.unref();
 

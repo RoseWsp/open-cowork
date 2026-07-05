@@ -218,7 +218,7 @@ async function enrichProcessPathForBuild(): Promise<void> {
             '-Command',
             "[Environment]::GetEnvironmentVariable('Path', 'User') + ';' + [Environment]::GetEnvironmentVariable('Path', 'Machine')",
           ],
-          { encoding: 'utf-8', timeout: 5000 }
+          { encoding: 'utf-8', timeout: 5000, windowsHide: true }
         ) as string
       ).trim();
       if (output) {
@@ -833,6 +833,7 @@ ${hints.join('\n')}
                 const child = spawn(shell, shellArgs, {
                   stdio: ['pipe', 'pipe', 'pipe'],
                   cwd: effectiveCwd,
+                  windowsHide: true,
                 });
                 let stdout = '';
                 let stderr = '';
@@ -1032,6 +1033,7 @@ ${hints.join('\n')}
             execFileSync('wsl', ['-d', distro, '-e', 'mkdir', '-p', sandboxSkillsPath], {
               encoding: 'utf-8',
               timeout: 10000,
+              windowsHide: true,
             });
 
             if (builtinSkillsPath && fs.existsSync(builtinSkillsPath)) {
@@ -1047,6 +1049,7 @@ ${hints.join('\n')}
                 {
                   encoding: 'utf-8',
                   timeout: 120000, // 2 min timeout for large skill directories
+                  windowsHide: true,
                 }
               );
             }
@@ -1070,6 +1073,7 @@ ${hints.join('\n')}
                 {
                   encoding: 'utf-8',
                   timeout: 120000, // 2 min timeout for large skill directories
+                  windowsHide: true,
                 }
               );
             }
@@ -1081,6 +1085,7 @@ ${hints.join('\n')}
               {
                 encoding: 'utf-8',
                 timeout: 10000,
+                windowsHide: true,
               }
             )
               .trim()

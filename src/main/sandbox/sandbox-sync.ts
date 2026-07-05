@@ -526,6 +526,7 @@ export class SandboxSync {
       timeout,
       encoding: 'utf-8',
       maxBuffer: 10 * 1024 * 1024,
+      windowsHide: true,
     });
     if (result.stderr) {
       log(`[SandboxSync] wslExec stderr: ${result.stderr.substring(0, 500)}`);

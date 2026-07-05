@@ -1301,6 +1301,7 @@ async function executePython(
     const child = spawn(python, ['-c', code], {
       env,
       stdio: ['ignore', 'pipe', 'pipe'],
+      windowsHide: true,
     });
 
     let stdout = '';
@@ -1571,7 +1572,7 @@ async function executeCommandSafe(
   options?: { timeout?: number }
 ): Promise<{ stdout: string; stderr: string }> {
   try {
-    const result = await execFileAsync(command, args, { timeout: options?.timeout || 30000 });
+    const result = await execFileAsync(command, args, { timeout: options?.timeout || 30000, windowsHide: true });
     return {
       stdout: typeof result.stdout === 'string' ? result.stdout : '',
       stderr: typeof result.stderr === 'string' ? result.stderr : '',

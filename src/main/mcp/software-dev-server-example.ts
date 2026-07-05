@@ -457,6 +457,7 @@ async function startGUIApplication(
   // Start the process
   const childProcess = exec(command, {
     cwd: WORKSPACE_DIR,
+    windowsHide: true,
   });
 
   const instance: GUIAppInstance = {
@@ -2233,15 +2234,18 @@ async function executeClaudeCode(
     const claudeCodePath = process.env.CLAUDE_CODE_PATH || 'claude-code';
 
     // Execute claude-code with the prompt
-    const { stdout, stderr } = await execFileAsync(
-      'bash',
-      ['-c', `${claudeCodePath} "${prompt.replace(/"/g, '\\"')}"`],
-      {
-        cwd: workingDir,
-        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-        timeout: 120000, // 2 minute timeout
-      }
-    );
+    const isWin = process.platform === 'win32';
+    const shell = isWin ? 'cmd.exe' : 'bash';
+    const escapedPrompt = prompt.replace(/"/g, '\\"');
+    const cmd = isWin
+      ? `"${claudeCodePath}" "${escapedPrompt}"`
+      : `${claudeCodePath} "${escapedPrompt}"`;
+    const { stdout, stderr } = await execFileAsync(shell, isWin ? ['/c', cmd] : ['-c', cmd], {
+      cwd: workingDir,
+      maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+      timeout: 120000, // 2 minute timeout
+      windowsHide: true,
+    });
 
     if (stderr && !stderr.includes('Warning')) {
       writeMCPLog('[ClaudeCode] stderr:', stderr);
@@ -2364,11 +2368,18 @@ async function executeCommand(
   workingDir: string = WORKSPACE_DIR
 ): Promise<{ stdout: string; stderr: string }> {
   try {
-    // Use execFileAsync with bash -c instead of exec to avoid direct shell interpolation
-    return await execFileAsync('bash', ['-c', command], {
+    // Use execFileAsync with bash -c (or cmd.exe /c on Windows) instead of exec
+    // to avoid direct shell interpolation. On Windows, bare `bash` resolves through
+    // PATH (e.g. scoop\shims\bash.exe) and creates a console window — use
+    // windowsHide: true to suppress it, and prefer cmd.exe on Windows for reliability.
+    const isWin = process.platform === 'win32';
+    const shell = isWin ? 'cmd.exe' : 'bash';
+    const args = isWin ? ['/c', command] : ['-c', command];
+    return await execFileAsync(shell, args, {
       cwd: workingDir,
       maxBuffer: 10 * 1024 * 1024,
       timeout: 300000, // 5 minute timeout
+      windowsHide: true,
     });
   } catch (error: unknown) {
     const err = error as NodeJS.ErrnoException & { stdout?: string; stderr?: string };
